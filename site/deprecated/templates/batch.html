@@ -1,0 +1,89 @@
+{% extends "navigation_base.html" %}
+ {% block title %}GWAS Archive - Batch{% endblock %}
+{% block navcontent %}
+
+    <header id="small-header">
+        <div class="header-content">
+            <div class="header-content-inner">
+                <form action="batch" method="post" enctype="multipart/form-data" class="form-inline">
+                    <div class="form-group">
+                    <input type="file" class="form-control-file" name="file" id="exampleInputFile" aria-describedby="fileHelp">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                <br>
+                <small id="fileHelp" class="form-text text-muted">
+                Upload a 23andMe text file, or any text file that has one SNP ID
+                on each line. For large files, generating results
+                may take several minutes.
+                </small>
+            </div>
+        </div>
+    </header>
+    {% if error %}
+    <p class="error"><strong>Must upload text file</strong></p>
+    {% endif %}
+
+  {% if auto_results or gwascatalog_results %}
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center" style="padding-top:5%">
+          <h2 class="section-heading">Results</h2>
+        <hr class="primary">
+      </div>
+    </div>
+  </div>
+  <aside>
+
+  <div class="data-table-wrapper">
+  <table id="studies-table" class="table table-striped table-bordered">
+      <thead>
+          <tr>
+              <th>RSID</th>
+              <th>PMID</th>
+              <th>Simple Phenotype</th>
+              <th>Detailed Phenotype</th>
+              <th>P-value</th>
+              <th>Source</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for result in auto_results %}
+          <tr>
+              <td>{{ result.rsid }}</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pubmed/?term={{ result.pmid }}">{{ result.pmid }}</a></td>
+              <td><span class="label custom-big-label">{{ result.simple_phenotype }}</span></td>
+              <td>{{ result.detailed_phenotype }}</td>
+              <td>{{ result.pvalue }}</td>
+              <td>Auto</td>
+          </tr>
+          {% endfor %}
+          {% for rsid, results in gwascatalog_results.items() %}
+          {% for result in results %}
+          <tr>
+              <td>{{ rsid }}</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pubmed/?term={{ result[1].pubmed_id }}">{{ result[1].pubmed_id }}</a></td>
+              <td><span class="label custom-big-label">{{ result[2].name }}</span></td>
+              <td></td>
+              <td>{{ result[0].pvalue }}</td>
+              <td>{{ result[0].source }}</td>
+          </tr>
+          {% endfor %}
+          {% endfor %}
+      </tbody>
+  </table>
+  </div>
+
+  </aside>
+  {% endif %}
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.3.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function() {
+            $('#studies-table').DataTable();
+    } );
+  </script>
+
+{% endblock %}  

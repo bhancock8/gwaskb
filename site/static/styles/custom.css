@@ -1,0 +1,34 @@
+.btn {
+    z-index: 0 !important;
+}
+
+#search-bar {
+    min-width: 500px;
+}
+
+@media (min-width: 768px) {
+    header#small-header {
+        height: 100px !important;
+    }
+}
+
+.data-table-wrapper {
+    width: 80%;
+    margin: 0 auto;
+}
+
+section {
+    padding: 50px 0 !important;
+}
+
+section .link {
+    height: 200px !important;
+}
+
+section .link:hover {
+    background-color: aliceblue !important;
+}
+
+.error {
+    background-color: red;
+}
