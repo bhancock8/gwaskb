@@ -8,6 +8,7 @@ from math import log10, floor
 # ----------------------------------------------------------------------------
 
 # create sqlite database
+# BJH 11/5/18: refactored all gwasdb -> gwaskb. Left this one unchanged to preserve path.
 engine = create_engine('sqlite:////local_data/gwasdb/site/tmp/merged-associations.sql')
 print APP_ROOT
 print 'sqlite:///{}/tmp/merged-associations.sql'.format(APP_ROOT)
@@ -29,7 +30,7 @@ Base.query = db1_session.query_property()
 Base2.query = db2_session.query_property()
 
 
-def import_gwasdb_associations():
+def import_gwaskb_associations():
     from models import MergedAssociation, Association, SNP, Phenotype, Paper
     Base.metadata.create_all(bind=engine)
 
@@ -53,7 +54,7 @@ def import_gwasdb_associations():
                 phenotype_name = tokens[2]
             else:
                 phenotype_name = "\\\\".join([tokens[2], tokens[3]])
-            phenotype_entry = Phenotype(name=phenotype_name, source="gwasdb")
+            phenotype_entry = Phenotype(name=phenotype_name, source="gwaskb")
             db2_session.add(phenotype_entry)
             db2_session.flush()
 
@@ -62,7 +63,7 @@ def import_gwasdb_associations():
             if p_value != 0:
                 p_value = round(p_value, -int(floor(log10(abs(p_value)))))
             entry = Association(snp_id=snp.id, phenotype_id=phenotype_entry.id,
-                    paper_id=paper.id, pvalue=p_value, source="gwasdb")
+                    paper_id=paper.id, pvalue=p_value, source="gwaskb")
             db2_session.add(entry)
 
     db2_session.commit()
@@ -85,7 +86,7 @@ def init_db():
             .filter(Paper.id == association.paper_id).first()
         phenotype = db2_session.query(Phenotype) \
             .filter(Phenotype.id == association.phenotype_id).first()
-        if association.source == 'gwasdb' and '\\' in phenotype.name:
+        if association.source == 'gwaskb' and '\\' in phenotype.name:
             simple_phenotype = phenotype.name.split('\\')[0]
             detailed_phenotype = phenotype.name.split('\\')[2]
         else:

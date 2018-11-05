@@ -19,7 +19,7 @@ class MergedAssociation(Base):
     authors         = Column( String(1000) )
     journal         = Column( String(1000) )
     title           = Column( String(1000) )
-    source          = Column( String(1000) ) #gwas_central, gwas_catalog, gwasdb
+    source          = Column( String(1000) ) #gwas_central, gwas_catalog, gwaskb
     oddsratio       = Column( Float )
     beta            = Column( Float )
     chrom           = Column( Integer )

@@ -1,4 +1,4 @@
-from database import import_gwasdb_associations, init_db
+from database import import_gwaskb_associations, init_db
 
-import_gwasdb_associations()
+import_gwaskb_associations()
 init_db()
