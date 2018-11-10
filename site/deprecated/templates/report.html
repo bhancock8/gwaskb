@@ -1,0 +1,110 @@
+{% extends "navigation_base.html" %}
+{% block title %}Report{% endblock %}
+{% block navcontent %}
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center" style="padding-top:5%">
+        <h2 class="section-heading">Your Report</h2>
+        <hr class="primary">
+      </div>
+    </div>
+  </div>
+  <aside>
+
+  {% for rsid in rsid_map %}
+
+  <div class="card">
+    <div class="custom-header">
+      <h4 class="card-title"><a href="http://www.snpedia.com/index.php/rs{{ rsid }}">rs{{ rsid }}</a></h4>
+      {% set genotype = rsid_genotype_map[rsid] %}
+      <h6 class="card-subtitle">Your Genotype: {{ genotype }}</h6>
+    </div>
+    {% for entry in rsid_map[rsid] %}
+    <div class="custom-body">
+
+      {% if entry.source == 'snpedia' %}
+      
+      <div class="custom-subheader">
+        <div class="custom-description">
+          {% if entry.description %}
+            <h4>Phenotype: <span class="label custom-big-label">{{ entry.description }}</span></h4>
+          {% endif %}
+        </div>
+        <div class="text-muted custom-source">
+          <b>Snpedia</b>
+        </div>
+      </div>
+      <div class="custom-text">
+        {% if entry.magnitude %}
+          Magnitude: {{ entry.magnitude }}
+        {% endif %}
+        {% if entry.magnitude and entry.reupte %} | {% endif %}
+        {% if entry.repute %}
+          Repute: {{ entry.repute }}
+        {% endif %}
+      </div>
+
+      {% elif entry.source == 'gwas_catalog' %}
+
+      <div class="custom-subheader">
+        <div class="custom-description">
+          {% if entry.name %}
+          <h4>Phenotype: <span class="label custom-big-label">{{ entry.name }}</span></h4>
+          {% endif %}
+          {% if entry.synonyms %}
+            <br>Synonyms: 
+            {% for keyword in entry.synonyms %}
+            <span class="label custom-big-label">{{ keyword }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class="text-muted custom-source">
+          <b>Gwas Catalog</b>
+        </div>
+      </div>
+
+      <div class="custom-text">
+        {% if entry.pvalue %}P-Value: {{ entry.pvalue }}{% endif %}
+        {% if entry.pvalue and entry.oddsratio %} | {% endif %}
+        {% if entry.oddsratio %}Odds Ratio: {{ entry.oddsratio }}{% endif %}
+      </div>
+      <div class="custom-text">Source: {{ entry.title }} ({{ entry.journal }})   <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+        <a href="http://www.ncbi.nlm.nih.gov/pubmed/?term={{ entry.pmid }}" class="card-link" style="font-size: 80%; white-space:nowrap"> PubMed ID: {{ entry.pmid }}</a></div>
+
+      {% elif entry.source == 'auto' %}
+
+      <div class="custom-subheader">
+        <div class="custom-description">
+          {% if entry.simple_phenotype %}
+            <h4>Phenotype: 
+            {% for keyword in entry.simple_phenotype %}
+            <span class="label custom-big-label">{{ keyword }}</span>
+            {% endfor %}</h4>
+          {% endif %}
+          {% if entry.detailed_phenotype %}
+            Detailed Phenotype: <span class="label custom-small-label">{{ entry.detailed_phenotype }}</span><br>
+          {% endif %}
+        </div>
+        <div class="text-muted custom-source">
+          <b>Auto   </b><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+        </div>
+      </div>
+        <div class="custom-text">
+          P-Value: {{ entry.pvalue }}
+        </div>
+        <div class="custom-text">Source: Fill in entry.title (entry.journal)   <span class="glyphicon glyphicon-book" aria-hidden="true" style="display:inline"></span>
+          <a href="http://www.ncbi.nlm.nih.gov/pubmed/?term={{ entry.pmid }}" class="card-link" style="font-size: 80%; white-space:nowrap"> PubMed ID: {{ entry.pmid }}</a>
+        </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  </aside>
+
+  <!-- jQuery first, then Tether, then Bootstrap JS. -->
+  <script src="{{ url_for('static',filename='bootstrap-4.0.0-alpha.4/dist/js/bootstrap.min.js') }}" integrity="VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static',filename='bootstrap-4.0.0-alpha.4/dist/js/tether.min.js') }}" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static',filename='bootstrap-4.0.0-alpha.4/dist/js/jquery.min.js') }}" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+
+{% endblock %}
